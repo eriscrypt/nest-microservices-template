@@ -1,9 +1,13 @@
+import { DatabaseService } from '@app/common/database';
 import { Injectable } from '@nestjs/common';
+import { Cat } from '@prisma/client';
 
 @Injectable()
 export class CatsService {
-  getHello(): string {
-    return 'Hello World!';
+  constructor(private readonly prisma: DatabaseService) {}
+
+  getAll(): Promise<Cat[]> {
+    return this.prisma.cat.findMany();
   }
 
   ping(): string {

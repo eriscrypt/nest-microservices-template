@@ -10,8 +10,6 @@ services:
       target: development
     env_file:
       - ./apps/cats/.env
-    ports:
-      - '3000:3000'
     depends_on:
       - postgres-template
       - rabbitmq-template
@@ -21,10 +19,29 @@ services:
       - /usr/src/app/node_modules
     command: yarn start:dev:prisma cats
 
+  # Root
+  root:
+    container_name: root
+    build:
+      context: .
+      dockerfile: ./apps/root/Dockerfile
+      target: development
+    env_file:
+      - ./apps/root/.env
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres-template
+      - rabbitmq-template
+      - redis-template
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: yarn start:dev:prisma root
+
   # RabbitMQ for event bus
   rabbitmq-template:
-    image: rabbitmq:3.9.10-management
-    container_name: rabbitmq-template
+    image: rabbitmq
     ports:
       - '5672:5672'
 

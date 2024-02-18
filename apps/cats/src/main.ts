@@ -1,8 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { CatsModule } from './cats.module';
+import { RmqService } from '@app/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(CatsModule);
-  await app.listen(3000);
+  const rmqService = app.get<RmqService>(RmqService);
+  app.connectMicroservice(rmqService.getOptions('CATS'));
+  await app.startAllMicroservices();
 }
-bootstrap();
+bootstrap().catch(console.error);
